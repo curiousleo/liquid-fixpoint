@@ -77,7 +77,7 @@ key3 :: Builder -> Builder -> Builder -> Builder ->  Builder
 key3 k b1 b2 b3 = parenSeqs [k, b1, b2, b3]
 
 seqs :: [Builder] -> Builder
-seqs = foldr (<>) mempty . L.intersperse " "
+seqs = mconcat . L.intersperse " "
 
 bShow :: Show a => a -> Builder
 bShow = fromString . show

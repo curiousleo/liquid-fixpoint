@@ -14,6 +14,9 @@ mkShell {
   LANG="C.UTF-8";
 
   buildInputs = [
+    ###########################################################################
+    # Build
+
     haskell.compiler.ghc8107
 
     # nix is required because we use stack in "Nix mode", whereby stack invokes
@@ -21,5 +24,11 @@ mkShell {
     nix
 
     stack
+
+    ###########################################################################
+    # Profiling
+
+    haskellPackages.ghc-prof-flamegraph
+    perl
   ];
 }
