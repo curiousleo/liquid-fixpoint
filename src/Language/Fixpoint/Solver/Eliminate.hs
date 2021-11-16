@@ -64,7 +64,7 @@ kutVars cfg si   = (es, depCuts ds, depNonCuts ds)
 --------------------------------------------------------------------------------
 -- | Map each `KVar` to the list of constraints on which it appears on RHS
 --------------------------------------------------------------------------------
-type KIndex = M.HashMap KVar [Integer]
+type KIndex = M.HashMap KVar [Int]
 
 --------------------------------------------------------------------------------
 kIndex     :: SInfo a -> KIndex
@@ -92,7 +92,7 @@ rhsSubst             = rsu . crhs
     rsu (PKVar _ su) = su
     rsu _            = errorstar "Eliminate.rhsSubst called on bad input"
 
-getSubC :: SInfo a -> Integer -> SimpC a
+getSubC :: SInfo a -> Int -> SimpC a
 getSubC si i = safeLookup msg i (cm si)
   where
     msg = "getSubC: " ++ show i

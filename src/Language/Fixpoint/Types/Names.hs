@@ -428,7 +428,7 @@ suffixSymbol  x y = symbol $ suffixSymbolText (symbolText x) (symbolText y)
 suffixSymbolText :: T.Text -> T.Text -> T.Text
 suffixSymbolText  x y = x <> symSepName <> y
 
-vv                  :: Maybe Integer -> Symbol
+vv                  :: Maybe Int -> Symbol
 -- vv (Just i)         = symbol $ symbolSafeText vvName `T.snoc` symSepName `mappend` T.pack (show i)
 vv (Just i)         = intSymbol vvName i
 vv Nothing          = vvName

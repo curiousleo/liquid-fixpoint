@@ -50,7 +50,7 @@ dropUnusedBinds fi = fi {bs = filterBindEnv isUsed (bs fi)}-- { bs = mapBindEnv 
 
 data Ref
   = RB !BindId    -- ^ Bind identifier
-  | RI !Integer   -- ^ Constraint identifier?
+  | RI !Int   -- ^ Constraint identifier?
     deriving (Eq, Generic)
 
 instance NFData   Ref
@@ -71,7 +71,7 @@ mkIdMap :: SInfo a -> IdMap
 --------------------------------------------------------------------------------
 mkIdMap fi = M.foldlWithKey' (updateIdMap $ bs fi) M.empty $ cm fi
 
-updateIdMap :: BindEnv -> IdMap -> Integer -> SimpC a -> IdMap
+updateIdMap :: BindEnv -> IdMap -> Int -> SimpC a -> IdMap
 updateIdMap be m scId s = M.insertWith S.union (RI scId) refSet m'
   where
     ids                 = elemsIBindEnv (senv s)

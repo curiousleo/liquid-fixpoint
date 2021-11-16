@@ -365,7 +365,7 @@ sMapMaybe :: (Hashable b, Eq b) => (a -> Maybe b) -> S.HashSet a -> S.HashSet b
 sMapMaybe f = S.fromList . mapMaybe f . S.toList
 
 --------------------------------------------------------------------------------
-type EdgeRank = M.HashMap F.KVar Integer
+type EdgeRank = M.HashMap F.KVar Int
 --------------------------------------------------------------------------------
 edgeRank :: [CEdge] -> EdgeRank
 edgeRank es = minimum . (n :) <$> kiM

@@ -36,7 +36,7 @@ import qualified Language.Fixpoint.Types.Config as C
 import Language.Fixpoint.Solver.Instantiate (instantiate)
 
 --------------------------------------------------------------------------------
-solve :: (NFData a, F.Fixpoint a, Show a, F.Loc a) => Config -> F.SInfo a -> IO (F.Result (Integer, a))
+solve :: (NFData a, F.Fixpoint a, Show a, F.Loc a) => Config -> F.SInfo a -> IO (F.Result (Int, a))
 --------------------------------------------------------------------------------
 
 solve cfg fi = do
@@ -98,7 +98,7 @@ solve_ :: (NFData a, F.Fixpoint a, F.Loc a)
        -> Sol.Solution
        -> S.HashSet F.KVar
        -> W.Worklist a
-       -> SolveM (F.Result (Integer, a), Stats)
+       -> SolveM (F.Result (Int, a), Stats)
 --------------------------------------------------------------------------------
 solve_ cfg fi s0 ks wkl = do
   let s1   = {-# SCC "sol-init" #-} S.init cfg fi ks
@@ -206,7 +206,7 @@ result
   -> Config
   -> W.Worklist a
   -> Sol.Solution
-  -> SolveM (F.Result (Integer, a))
+  -> SolveM (F.Result (Int, a))
 --------------------------------------------------------------------------------
 result bindingsInSmt cfg wkl s =
   sendConcreteBindingsToSMT bindingsInSmt $ \bindingsInSmt2 -> do
@@ -287,7 +287,7 @@ isUnsat bindingsInSmt s c = do
   lift   $ whenLoud $ showUnsat res (F.subcId c) lp rp
   return res
 
-showUnsat :: Bool -> Integer -> F.Pred -> F.Pred -> IO ()
+showUnsat :: Bool -> Int -> F.Pred -> F.Pred -> IO ()
 showUnsat u i lP rP = {- when u $ -} do
   putStrLn $ printf   "UNSAT id %s %s" (show i) (show u)
   putStrLn $ showpp $ "LHS:" <+> pprint lP

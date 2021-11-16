@@ -52,14 +52,14 @@ type Oracle a c = (Config -> Solver a -> FInfo a -> [c] -> IO Bool)
 
 commonDebug :: (NFData a, Fixpoint a) => (FInfo a -> [c])
                                       -> (FInfo a -> [c] -> FInfo a)
-                                      -> (Result (Integer, a) -> Bool)
+                                      -> (Result (Int, a) -> Bool)
                                       -> Bool
                                       -> Config
                                       -> Solver a
                                       -> FInfo a
                                       -> Ext
                                       -> (FInfo a -> [c] -> String)
-                                      -> IO (Result (Integer, a))
+                                      -> IO (Result (Int, a))
 commonDebug init updateFi checkRes min cfg solve fi ext formatter = do
   let cs0 = init fi
   let oracle = mkOracle updateFi checkRes
@@ -71,7 +71,7 @@ commonDebug init updateFi checkRes min cfg solve fi ext formatter = do
 
 ---------------------------------------------------------------------------
 minQuery :: (NFData a, Fixpoint a) => Config -> Solver a -> FInfo a
-         -> IO (Result (Integer, a))
+         -> IO (Result (Int, a))
 ---------------------------------------------------------------------------
 minQuery cfg solve fi = do
   let cfg'  = cfg { minimize = False }
@@ -84,7 +84,7 @@ minQuery cfg solve fi = do
 
 ---------------------------------------------------------------------------
 minQuals :: (NFData a, Fixpoint a) => Config -> Solver a -> FInfo a
-         -> IO (Result (Integer, a))
+         -> IO (Result (Int, a))
 ---------------------------------------------------------------------------
 minQuals cfg solve fi = do
   let cfg'  = cfg { minimizeQs = False }
@@ -95,7 +95,7 @@ minQuals cfg solve fi = do
 
 ---------------------------------------------------------------------------
 minKvars :: (NFData a, Fixpoint a) => Config -> Solver a -> FInfo a
-         -> IO (Result (Integer, a))
+         -> IO (Result (Int, a))
 ---------------------------------------------------------------------------
 minKvars cfg solve fi = do
   let cfg'  = cfg { minimizeKs = False }
@@ -119,7 +119,7 @@ addExt :: Ext -> Config -> Config
 addExt ext cfg = cfg { srcFile = queryFile ext cfg }
 
 mkOracle :: (NFData a, Fixpoint a) => (FInfo a -> [c] -> FInfo a)
-                                   -> (Result (Integer, a) -> Bool)
+                                   -> (Result (Int, a) -> Bool)
                                    -> Oracle a c
 mkOracle updateFi checkRes cfg solve fi qs = do
   let fi' = updateFi fi qs

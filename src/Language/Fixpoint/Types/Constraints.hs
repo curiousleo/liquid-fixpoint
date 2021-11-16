@@ -166,7 +166,7 @@ isGWfc (WfC  {}) = False
 instance HasGradual (WfC a) where
   isGradual = isGWfc
 
-type SubcId = Integer
+type SubcId = Int
 
 data SubC a = SubC
   { _senv  :: !IBindEnv
@@ -181,7 +181,7 @@ data SubC a = SubC
 data SimpC a = SimpC
   { _cenv  :: !IBindEnv
   , _crhs  :: !Expr
-  , _cid   :: !(Maybe Integer)
+  , _cid   :: !(Maybe Int)
   , cbind  :: !BindId               -- ^ Id of lhs/rhs binder
   , _ctag  :: !Tag
   , _cinfo :: !a
@@ -191,7 +191,7 @@ data SimpC a = SimpC
 instance Loc a => Loc (SimpC a) where
   srcSpan = srcSpan . _cinfo
 
-strengthenHyp :: SInfo a -> [(Integer, Expr)] -> SInfo a
+strengthenHyp :: SInfo a -> [(Int, Expr)] -> SInfo a
 strengthenHyp si ies = strengthenBinds si bindExprs
   where
     bindExprs        = safeFromList "strengthenHyp" [ (subcBind si i, e) | (i, e) <- ies ]
@@ -228,7 +228,7 @@ strengthenSortedReft (RR s (Reft (v, r))) e = RR s (Reft (v, pAnd [r, e]))
 class TaggedC c a where
   senv  :: c a -> IBindEnv
   updateSEnv  :: c a -> (IBindEnv -> IBindEnv) -> c a
-  sid   :: c a -> Maybe Integer
+  sid   :: c a -> Maybe Int
   stag  :: c a -> Tag
   sinfo :: c a -> a
   clhs  :: BindEnv -> c a -> [(Symbol, SortedReft)]
@@ -450,10 +450,10 @@ wfC be sr x = if all isEmptySubst sus -- ++ gsus)
     go' (PAnd es)      = concatMap go' es
     go' _              = []
 
-mkSubC :: IBindEnv -> SortedReft -> SortedReft -> Maybe Integer -> Tag -> a -> SubC a
+mkSubC :: IBindEnv -> SortedReft -> SortedReft -> Maybe Int -> Tag -> a -> SubC a
 mkSubC = SubC
 
-subC :: IBindEnv -> SortedReft -> SortedReft -> Maybe Integer -> Tag -> a -> [SubC a]
+subC :: IBindEnv -> SortedReft -> SortedReft -> Maybe Int -> Tag -> a -> [SubC a]
 subC γ sr1 sr2 i y z = [SubC γ sr1' (sr2' r2') i y z | r2' <- reftConjuncts r2]
    where
      RR t1 r1          = sr1
@@ -462,7 +462,7 @@ subC γ sr1 sr2 i y z = [SubC γ sr1' (sr2' r2') i y z | r2' <- reftConjuncts r2
      sr2' r2'          = RR t2 $ shiftVV r2' vv'
      vv'               = mkVV i
 
-mkVV :: Maybe Integer -> Symbol
+mkVV :: Maybe Int -> Symbol
 mkVV (Just i)  = vv $ Just i
 mkVV Nothing   = vvCon
 
@@ -471,7 +471,7 @@ shiftVV r@(Reft (v, ras)) v'
    | v == v'   = r
    | otherwise = Reft (v', subst1 ras (v, EVar v'))
 
-addIds :: [SubC a] -> [(Integer, SubC a)]
+addIds :: [SubC a] -> [(Int, SubC a)]
 addIds = zipWith (\i c -> (i, shiftId i $ c {_sid = Just i})) [1..]
   where
     -- Adding shiftId to have distinct VV for SMT conversion
@@ -837,7 +837,7 @@ subcToSimpc m s = SimpC
   , _cinfo      = sinfo s
   }
 
-outVV :: (BindM, FInfo a) -> Integer -> SubC a -> (BindM, FInfo a)
+outVV :: (BindM, FInfo a) -> Int -> SubC a -> (BindM, FInfo a)
 outVV (m, fi) i c = (m', fi')
   where
     fi'           = fi { bs = be', cm = cm' }
@@ -848,7 +848,7 @@ outVV (m, fi) i c = (m', fi')
     sr            = slhs c
     x             = reftBind $ sr_reft sr
 
-type BindM = M.HashMap Integer BindId
+type BindM = M.HashMap Int BindId
 
 sinfoToFInfo :: SInfo a -> FInfo a
 sinfoToFInfo fi = fi
@@ -876,7 +876,7 @@ simpcToSubc env s = SubC
 ---------------------------------------------------------------------------
 -- | Top level Solvers ----------------------------------------------------
 ---------------------------------------------------------------------------
-type Solver a = Config -> FInfo a -> IO (Result (Integer, a))
+type Solver a = Config -> FInfo a -> IO (Result (Int, a))
 
 --------------------------------------------------------------------------------
 saveQuery :: Fixpoint a => Config -> FInfo a -> IO ()

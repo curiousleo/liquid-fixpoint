@@ -92,7 +92,7 @@ data Config = Config
   , noEnvironmentReduction :: Bool     -- ^ Don't use environment reduction
   , inlineANFBindings :: Bool          -- ^ Inline ANF bindings.
                                        -- Sometimes improves performance and sometimes worsens it.
-  , checkCstr        :: [Integer]      -- ^ Only check these specific constraints
+  , checkCstr        :: [Int]      -- ^ Only check these specific constraints
   , extensionality   :: Bool           -- ^ Enable extensional interpretation of function equality
   , rwTerminationCheck  :: Bool        -- ^ Enable termination checking for rewriting
   , stdin               :: Bool        -- ^ Read input query from stdin

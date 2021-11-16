@@ -252,7 +252,7 @@ errFreeVarInQual q x = err sp $ vcat [ "Qualifier with free vars"
   where
     sp               = srcSpan q
 
-errFreeVarInConstraint :: (PPrint a) => (Integer, a) -> Error
+errFreeVarInConstraint :: (PPrint a) => (Int, a) -> Error
 errFreeVarInConstraint (i, ss) = err dummySpan $
   vcat [ "Constraint with free vars"
        , pprint i
@@ -260,7 +260,7 @@ errFreeVarInConstraint (i, ss) = err dummySpan $
        , "Try using the --prune-unsorted flag"
        ]
 
-errIllScopedKVar :: (PPrint k, PPrint bs) => (k, Integer, Integer, bs) -> Error
+errIllScopedKVar :: (PPrint k, PPrint bs) => (k, Int, Int, bs) -> Error
 errIllScopedKVar (k, inId, outId, xs) = err dummySpan $
   vcat [ "Ill-scoped KVar" <+> pprint k
        , "Missing common binders at def" <+> pprint inId <+> "and use" <+> pprint outId

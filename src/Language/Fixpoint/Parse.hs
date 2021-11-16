@@ -1329,7 +1329,7 @@ subCP = do pos <- getSourcePos
            reserved "rhs"
            rhs <- sortedReftP
            reserved "id"
-           i   <- natural <* spaces
+           i   <- intP <* spaces
            tag <- tagP
            pos' <- getSourcePos
            return $ subC' env lhs rhs i tag pos pos'
@@ -1337,7 +1337,7 @@ subCP = do pos <- getSourcePos
 subC' :: IBindEnv
       -> SortedReft
       -> SortedReft
-      -> Integer
+      -> Int
       -> Tag
       -> SourcePos
       -> SourcePos

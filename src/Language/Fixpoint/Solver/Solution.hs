@@ -296,7 +296,7 @@ data CombinedEnv = CEnv
 instance F.Loc CombinedEnv where
   srcSpan = ceSpan
 
-type Cid         = Maybe Integer
+type Cid         = Maybe Int
 type ExprInfo    = (F.Expr, KInfo)
 
 apply :: CombinedEnv -> Sol.Sol a Sol.QBind -> F.IBindEnv -> ExprInfo

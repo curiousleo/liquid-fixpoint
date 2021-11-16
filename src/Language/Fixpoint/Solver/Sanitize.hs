@@ -192,7 +192,7 @@ _banIllScopedKvars si = Misc.applyNonNull (Right si) (Left . badKs) errs
 badKs :: [(F.KVar, F.SubcId, F.SubcId, F.IBindEnv)] -> F.Error
 badKs = E.catErrors . map E.errIllScopedKVar
 
-type KvConstrM = M.HashMap F.KVar [Integer]
+type KvConstrM = M.HashMap F.KVar [Int]
 type KvDefs    = (KvConstrM, KvConstrM)
 
 checkIllScope :: F.SInfo a -> KvDefs -> F.KVar -> [(F.KVar, F.SubcId, F.SubcId, F.IBindEnv)]
@@ -383,10 +383,10 @@ banMixedRhs fi = Misc.applyNonNull (Right fi) (Left . badRhs) bads
     bads       = [(i, c) | (i, c) <- ics, not $ isOk c]
     isOk c     = isKvarC c || isConcC c
 
-badRhs :: Misc.ListNE (Integer, F.SimpC a) -> E.Error
+badRhs :: Misc.ListNE (Int, F.SimpC a) -> E.Error
 badRhs = E.catErrors . map badRhs1
 
-badRhs1 :: (Integer, F.SimpC a) -> E.Error
+badRhs1 :: (Int, F.SimpC a) -> E.Error
 badRhs1 (i, c) = E.err E.dummySpan $ vcat [ "Malformed RHS for constraint id" <+> pprint i
                                           , nest 4 (pprint (F.crhs c)) ]
 

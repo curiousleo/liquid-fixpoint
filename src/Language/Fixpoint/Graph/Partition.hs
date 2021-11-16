@@ -57,7 +57,7 @@ import           Data.List (sortBy)
 --------------------------------------------------------------------------------
 
 data CPart c a = CPart { pws :: !(M.HashMap F.KVar (F.WfC a))
-                       , pcm :: !(M.HashMap Integer (c a))
+                       , pcm :: !(M.HashMap Int (c a))
                        }
 
 instance Semigroup (CPart c a) where
@@ -87,7 +87,7 @@ mcInfo c = do
                  , mcMaxPartSize = maxPartSize c
                  }
 
-partition :: (F.Fixpoint a, F.Fixpoint (c a), F.TaggedC c a) => Config -> F.GInfo c a -> IO (F.Result (Integer, a))
+partition :: (F.Fixpoint a, F.Fixpoint (c a), F.TaggedC c a) => Config -> F.GInfo c a -> IO (F.Result (Int, a))
 partition cfg fi
   = do dumpPartitions cfg fis
        -- writeGraph      f   g
@@ -173,7 +173,7 @@ dumpPartitions cfg fis =
 -- | Type alias for a function to construct a partition. mkPartition and
 --   mkPartition' are the two primary functions that conform to this interface
 type PartitionCtor c a b = F.GInfo c a
-                       -> M.HashMap Int [(Integer, c a)]
+                       -> M.HashMap Int [(Int, c a)]
                        -> M.HashMap Int [(F.KVar, F.WfC a)]
                        -> Int
                        -> b -- ^ typically a F.FInfo a or F.CPart a
@@ -197,7 +197,7 @@ partitionByConstraints f fi kvss = f fi icM iwM <$> js
     cM   = M.fromList [ (c, i) | (Cstr c, i) <- kvI ]
 
 mkPartition :: F.GInfo c a
-            -> M.HashMap Int [(Integer, c a)]
+            -> M.HashMap Int [(Int, c a)]
             -> M.HashMap Int [(F.KVar, F.WfC a)]
             -> Int
             -> F.GInfo c a
@@ -207,7 +207,7 @@ mkPartition fi icM iwM j
       }
 
 mkPartition' :: F.GInfo c a
-             -> M.HashMap Int [(Integer, c a)]
+             -> M.HashMap Int [(Int, c a)]
              -> M.HashMap Int [(F.KVar, F.WfC a)]
              -> Int
              -> CPart c a
