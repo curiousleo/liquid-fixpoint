@@ -20,7 +20,14 @@
 {-# LANGUAGE RecordWildCards           #-}
 {-# LANGUAGE ExistentialQuantification #-}
 
-module Language.Fixpoint.Solver.Interpreter (instInterpreter) where
+module Language.Fixpoint.Solver.Interpreter
+  ( instInterpreter
+
+  -- The following exports are for property testing.
+  , ICtx(..)
+  , Knowledge(..)
+  , Simplifiable(..)
+  ) where
 
 import           Language.Fixpoint.Types hiding (simplify)
 import           Language.Fixpoint.Types.Config  as FC
