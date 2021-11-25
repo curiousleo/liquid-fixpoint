@@ -13,23 +13,50 @@ import Test.Tasty
     testGroup,
   )
 import Test.Tasty.QuickCheck
-  ( QuickCheckMaxSize (..),
+  ( Property,
+    QuickCheckMaxSize (..),
+    QuickCheckTests (..),
+    counterexample,
+    label,
     testProperty,
   )
 
 tests :: TestTree
 tests =
-  localOption
-    (QuickCheckMaxSize 4)
+  withOptions
     ( testGroup
         "simplify does not increase expression size"
         [ testProperty "PLE" (prop_no_increase SimplifyPLE.simplify'),
           testProperty "Interpreter" (prop_no_increase SimplifyInterpreter.simplify')
         ]
     )
+  where
+    withOptions tests = localOption (QuickCheckMaxSize 4) (localOption (QuickCheckTests 500) tests)
 
-prop_no_increase :: (Expr -> Expr) -> Expr -> Bool
-prop_no_increase f e = exprSize (f e) <= exprSize e
+prop_no_increase :: (Expr -> Expr) -> Expr -> Property
+prop_no_increase f e =
+  let originalSize = exprSize e
+      simplified = f e
+      simplifiedSize = exprSize simplified
+   in label ("reduced size by " ++ show (originalSize - simplifiedSize)) $
+        counterexample
+          ( unlines
+              [ show simplifiedSize ++ " > " ++ show originalSize,
+                "simplified: " ++ show simplified
+              ]
+          )
+          (simplifiedSize <= originalSize)
+
+-- | Like '<=', but prints a counterexample when it fails.
+infix 4 =<=
+
+(=<=) :: (Ord a, Show a) => a -> a -> Property
+x =<= y =
+  counterexample (show x ++ interpret res ++ show y) res
+  where
+    res = x <= y
+    interpret True = " <= "
+    interpret False = " > "
 
 exprSize :: Expr -> Int
 -- Undo the removal of ENeg in @simplify@ so it does not count as increasing the size of the expression.
