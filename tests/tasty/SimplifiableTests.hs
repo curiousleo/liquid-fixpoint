@@ -47,17 +47,6 @@ prop_no_increase f e =
           )
           (simplifiedSize <= originalSize)
 
--- | Like '<=', but prints a counterexample when it fails.
-infix 4 =<=
-
-(=<=) :: (Ord a, Show a) => a -> a -> Property
-x =<= y =
-  counterexample (show x ++ interpret res ++ show y) res
-  where
-    res = x <= y
-    interpret True = " <= "
-    interpret False = " > "
-
 exprSize :: Expr -> Int
 -- Undo the removal of ENeg in @simplify@ so it does not count as increasing the size of the expression.
 exprSize (EBin Minus (ECon (I 0)) e) = exprSize (ENeg e)
